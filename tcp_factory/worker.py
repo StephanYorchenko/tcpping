@@ -38,9 +38,9 @@ class TCPWorker(threading.Thread):
 					self.resulter.add_result(response)
 					break
 				tcp_resp = a[-24:]
-				if int.from_bytes(tcp_resp[:2],
-								  "big") != port or int.from_bytes(
-						tcp_resp[2: 4], "big") != source:
+				pport = int.from_bytes(tcp_resp[:2], "big")
+				psource = int.from_bytes(tcp_resp[2: 4], "big")
+				if pport != port or psource != source:
 					continue
 				e = round((time.time() - st) * 1000, 3)
 				if tcp_resp[12:14] == b'`\x12':

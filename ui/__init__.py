@@ -44,7 +44,7 @@ class CLInterface:
         signal.signal(signal.SIGUSR1, self.usr1_handler)
         self.manager.start()
         self.manager.join()
-        CLInterface.show(self.manager.results)
+        CLInterface.show(self.manager.result_struct)
 
     @staticmethod
     def start(worker_factory, result_struct):
