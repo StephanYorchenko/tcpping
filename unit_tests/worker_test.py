@@ -65,7 +65,8 @@ class WorkTest(unittest.TestCase):
 
     @patch("builtins.print")
     @patch("socket.socket.sendto")
-    def test_work(self, mock_print, mock_sendto):
+    @patch("queue.Queue.task_done")
+    def test_work(self, mock_print, mock_sendto, mock_task_done):
         for req, res in self.answers.items():
             with patch.object(s.socket, attribute="recv", return_value=res):
                 self.worker._work()
@@ -73,6 +74,7 @@ class WorkTest(unittest.TestCase):
                     mock_sendto.mock_calls == [call(req, ("127.0.0.1", 0))]
                 )
                 self.assertTrue(mock_print.called)
+                self.assertTrue(mock_task_done.called)
 
 
 if __name__ == "__main__":
