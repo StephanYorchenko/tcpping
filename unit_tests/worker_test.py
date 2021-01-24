@@ -70,8 +70,8 @@ class WorkTest(unittest.TestCase):
         for req, res in self.answers.items():
             with patch.object(s.socket, attribute="recv", return_value=res):
                 self.worker._work()
-                self.assertEqual(
-                    mock_sendto.mock_calls == [call(req, ("127.0.0.1", 0))]
+                self.assertListEqual(
+                    mock_sendto.mock_calls, [call(req, ("127.0.0.1", 0))]
                 )
                 self.assertTrue(mock_print.called)
                 self.assertTrue(mock_task_done.called)
