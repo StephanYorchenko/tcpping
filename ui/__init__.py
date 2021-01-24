@@ -34,8 +34,8 @@ class CLInterface:
         parser.add_argument(
             "--timeout",
             type=int,
-            default=1,
-            help="maximum seconds for waiting server receive DEFAULT: 1",
+            default=2,
+            help="maximum seconds for waiting server receive DEFAULT: 2",
         )
         return parser.parse_args()
 

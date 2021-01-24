@@ -18,7 +18,9 @@ class TCPWorker(threading.Thread):
 		self.pack_factory = pack_factory
 		self.sockets = sock_factory
 		self.resulter = resulter
-		self.params = (timeout, k, self.get_host(host), queue.get(), port, 0)
+		self.params = [timeout, k, self.get_host(host), queue.get(), port, 0]
+		if self.params[2].startswith("127"):
+			self.params[1] = '127.0.0.1'
 		self.seq = seq
 		self.queue = queue
 
@@ -42,11 +44,11 @@ class TCPWorker(threading.Thread):
 				psource = int.from_bytes(tcp_resp[2: 4], "big")
 				if pport != port or psource != source:
 					continue
-				e = round((time.time() - st) * 1000, 3)
+				e = round((time.time() - st), 3)
 				if tcp_resp[12:14] == b'`\x12':
-					print(f'seq {self.seq}: tcp response from {host}:{port} [open] {e}ms')
+					print(f'seq {self.seq}: tcp response from {host}:{port} [open] {e}s')
 				elif tcp_resp[12:14] == b'`\x14':
-					print(f'seq {self.seq}: tcp response from {host}:{port} [closed] {e}ms')
+					print(f'seq {self.seq}: tcp response from {host}:{port} [closed] {e}s')
 				response = Message('Ok', 0, _time=e)
 				self.resulter.add_result(response)
 				break
