@@ -66,9 +66,7 @@ class WorkTest(unittest.TestCase):
 
     @patch("builtins.print")
     @patch("socket.socket.sendto", new_callable=BytesIO)
-    def test_work(
-        self, mock_print, mock_sendto,
-    ):
+    def test_work(self, mock_print, mock_sendto):
         for req, res in self.answers.items():
             with patch.object(s.socket, attribute="recv", return_value=res):
                 self.worker._work()
