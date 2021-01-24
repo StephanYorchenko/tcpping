@@ -1,8 +1,7 @@
 import socket as s
 import unittest
-from io import BytesIO
 from queue import Queue
-from unittest.mock import patch
+from unittest.mock import patch, call
 
 from domain import ResultStruct
 from tcp_factory import TCPWorker, SocketFactory, TCPFactory, TCPWorkerFactory
@@ -65,13 +64,15 @@ class WorkTest(unittest.TestCase):
         self.worker = worker
 
     @patch("builtins.print")
-    @patch("socket.socket.sendto", new_callable=lambda x, y: BytesIO(x))
+    @patch("socket.socket.sendto")
     def test_work(self, mock_print, mock_sendto):
         for req, res in self.answers.items():
             with patch.object(s.socket, attribute="recv", return_value=res):
                 self.worker._work()
-                self.assertEqual(req, mock_sendto.get_value())
-        self.assertTrue(mock_print.called)
+                self.assertEqual(
+                    mock_sendto.mock_calls == [call(req, ("127.0.0.1", 0))]
+                )
+                self.assertTrue(mock_print.called)
 
 
 if __name__ == "__main__":
