@@ -41,9 +41,19 @@ class TCPWorker(threading.Thread):
             while True:
                 try:
                     a = sock.recv(58)
+                    if time.time() - st > self.params[0]:
+                        raise socket.timeout
                 except socket.timeout:
-                    print(f"seq {self.seq}: no response [timeout]")
-                    response = Message("timeout", 1)
+                    if self.params[2].startswith("127"):
+                        print(
+                                f"seq {self.seq}: tcp response from "
+                                f"{host}:{port} [closed] 0s"
+                        )
+                        response = Message("Ok", 0, _time=0)
+                        self.resulter.add_result(response)
+                    else:
+                        print(f"seq {self.seq}: no response [timeout]")
+                        response = Message("timeout", 1)
                     self.resulter.add_result(response)
                     break
                 tcp_resp = a[-24:]
