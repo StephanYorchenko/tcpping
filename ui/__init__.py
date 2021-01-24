@@ -69,4 +69,3 @@ class CLInterface:
     def catch_error(message: Message):
         CLInterface.show(message)
         sys.exit(message.value)
-
