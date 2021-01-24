@@ -69,12 +69,14 @@ class WorkTest(unittest.TestCase):
     def test_work(self, mock_print, mock_sendto, mock_task_done):
         for req, res in self.answers.items():
             with patch.object(s.socket, attribute="recv", return_value=res):
-                self.worker._work()
-                self.assertListEqual(
-                    mock_sendto.mock_calls, [call(req, ("127.0.0.1", 0))]
-                )
-                self.assertTrue(mock_print.called)
-                self.assertTrue(mock_task_done.called)
+                with patch.object(TCPFactory, attribute="generate",
+                                  return_value=req):
+                    self.worker._work()
+                    self.assertListEqual(
+                        mock_sendto.mock_calls, [call(req, ("127.0.0.1", 0))]
+                    )
+                    self.assertTrue(mock_print.called)
+                    self.assertTrue(mock_task_done.called)
 
 
 if __name__ == "__main__":
